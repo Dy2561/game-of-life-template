@@ -35,5 +35,32 @@ public class GameOfLife implements Board {
         print(); 
     }
 
-   
+    public int countNeighbors(int x, int y) {
+        int count = 0;
+        int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+        for (int i = 0; i < 8; i++) {
+            count += get(x + dx[i], y + dy[i]); 
+        }
+        return count;
+    }
+
+    public int get(int x, int y) {
+        int xLimit = board.length;
+        int yLimit = board[0].length;
+        return board[(x + xLimit) % xLimit][(y + yLimit) % yLimit];
+    }
+
+    public int[][] get() {
+        return board;
+    }
+
+    public void print() {
+        System.out.print("\n ");
+        for (int y = 0; y < board[0].length; y++) {
+            System.out.print(y % 10 + " ");
+        }
+
+        
 }
