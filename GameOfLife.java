@@ -18,7 +18,7 @@ public class GameOfLife implements Board {
     public void set(int x, int y, int[][] data) {
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[0].length; j++) {
-                if (i + x < board.length && j + y < board[0].length) {
+                if (x + i < board.length && y + j < board[0].length) {
                     board[i + x][j + y] = data[i][j];
                 }
             }
@@ -52,9 +52,7 @@ public class GameOfLife implements Board {
         for (int i = 0; i < 8; i++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
-            if (nx >= 0 && nx < board.length && ny >= 0 && ny < board[0].length) {
-                count += board[nx][ny];
-            }
+            count += get(nx, ny);
         }
         return count;
     }
@@ -63,7 +61,7 @@ public class GameOfLife implements Board {
         if (x >= 0 && x < board.length && y >= 0 && y < board[0].length) {
             return board[x][y];
         }
-        return 0;
+        return 0;  // Treat out-of-bounds as dead
     }
 
     public int[][] get() {
