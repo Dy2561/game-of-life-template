@@ -14,6 +14,16 @@ public class GameOfLife implements Board {
         }
     }
 
+    @Override
+    public void set(int x, int y, int[][] data) {
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[0].length; j++) {
+                board[i + x][j + y] = data[i][j];
+            }
+        }
+    }
+
+
     public void step() {
         int[][] newBoard = new int[board.length][board[0].length];
 
