@@ -18,11 +18,12 @@ public class GameOfLife implements Board {
     public void set(int x, int y, int[][] data) {
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[0].length; j++) {
-                board[i + x][j + y] = data[i][j];
+                if (i + x < board.length && j + y < board[0].length) {
+                    board[i + x][j + y] = data[i][j];
+                }
             }
         }
     }
-
 
     public void step() {
         int[][] newBoard = new int[board.length][board[0].length];
@@ -32,17 +33,15 @@ public class GameOfLife implements Board {
                 int neighbors = countNeighbors(x, y);
 
                 if (board[x][y] == 1) {
-                    
                     newBoard[x][y] = (neighbors == 2 || neighbors == 3) ? 1 : 0;
                 } else {
-                    
                     newBoard[x][y] = (neighbors == 3) ? 1 : 0;
                 }
             }
         }
 
         board = newBoard;
-        print(); 
+        print();
     }
 
     public int countNeighbors(int x, int y) {
@@ -51,15 +50,20 @@ public class GameOfLife implements Board {
         int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
 
         for (int i = 0; i < 8; i++) {
-            count += get(x + dx[i], y + dy[i]); 
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if (nx >= 0 && nx < board.length && ny >= 0 && ny < board[0].length) {
+                count += board[nx][ny];
+            }
         }
         return count;
     }
 
     public int get(int x, int y) {
-        int xLimit = board.length;
-        int yLimit = board[0].length;
-        return board[(x + xLimit) % xLimit][(y + yLimit) % yLimit];
+        if (x >= 0 && x < board.length && y >= 0 && y < board[0].length) {
+            return board[x][y];
+        }
+        return 0;
     }
 
     public int[][] get() {
