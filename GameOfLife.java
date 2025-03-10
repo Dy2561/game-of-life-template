@@ -1,12 +1,21 @@
-import java.util.Arrays;
-
 public class GameOfLife implements Board {
 
     private int[][] board;
 
     public GameOfLife(int x, int y) {
-        board = new int[x][y]; 
+        board = new int[x][y];
     }
+
+    public void set(int x, int y, int[][] data) {
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[0].length; j++) {
+                if (x + i < board.length && y + j < board[0].length) {
+                    board[x + i][y + j] = data[i][j];
+                }
+            }
+        }
+    }
+    
 
     public void run(int turns) {
         for (int i = 0; i < turns; i++) {
@@ -14,54 +23,46 @@ public class GameOfLife implements Board {
         }
     }
 
-    @Override
-    public void set(int x, int y, int[][] data) {
-        for (int i = 0; i < data.length; i++) {
-            for (int j = 0; j < data[0].length; j++) {
-                if (x + i < board.length && y + j < board[0].length) {
-                    board[i + x][j + y] = data[i][j];
-                }
-            }
-        }
-    }
-
     public void step() {
-        int[][] newBoard = new int[board.length][board[0].length];
+        int[][] nextBoard = new int[board.length][board[0].length];
 
-        for (int x = 0; x < board.length; x++) {
-            for (int y = 0; y < board[0].length; y++) {
-                int neighbors = countNeighbors(x, y);
-
-                if (board[x][y] == 1) {
-                    newBoard[x][y] = (neighbors == 2 || neighbors == 3) ? 1 : 0;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                int liveNeighbors = countNeighbors(i, j);
+                if (board[i][j] == 1) {
+                    nextBoard[i][j] = (liveNeighbors == 2 || liveNeighbors == 3) ? 1 : 0;
                 } else {
-                    newBoard[x][y] = (neighbors == 3) ? 1 : 0;
+                    nextBoard[i][j] = (liveNeighbors == 3) ? 1 : 0;
                 }
             }
         }
 
-        board = newBoard;
+        board = nextBoard;
         print();
     }
 
     public int countNeighbors(int x, int y) {
         int count = 0;
-        int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
-        int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
 
-        for (int i = 0; i < 8; i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            count += get(nx, ny);
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (i == 0 && j == 0) {
+                    continue;
+                }
+                int neighborX = (x + i + board.length) % board.length;
+                int neighborY = (y + j + board[0].length) % board[0].length;
+
+                if (get(neighborX, neighborY) == 1) {
+                    count++;
+                }
+            }
         }
+
         return count;
     }
 
     public int get(int x, int y) {
-        if (x >= 0 && x < board.length && y >= 0 && y < board[0].length) {
-            return board[x][y];
-        }
-        return 0;  // Treat out-of-bounds as dead
+        return board[(x + board.length) % board.length][(y + board[0].length) % board[0].length];
     }
 
     public int[][] get() {
@@ -77,9 +78,13 @@ public class GameOfLife implements Board {
         for (int x = 0; x < board.length; x++) {
             System.out.print("\n" + x % 10);
             for (int y = 0; y < board[x].length; y++) {
-                System.out.print(board[x][y] == 1 ? "⬛" : "⬜");
+                if (board[x][y] == 1) {
+                    System.out.print("⬛");
+                } else {
+                    System.out.print("⬜");
+                }
             }
         }
         System.out.println();
-    } 
+    }
 }
